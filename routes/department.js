@@ -23,12 +23,23 @@ router.get('/', async function (req, res, next) {
   const newDepartment = new Department({
     department: req.body.department,
   })
-  const department = await Department.find().select('department')
+  // const department = await Department.find().select('department')
+  // res.json(department)
+  req.query
+  console.log('req.query: ', req.query);
+
+  const options = {
+    page: +req.query.page,
+    limit: +req.query.limit,
+  }
+  const department = await Department.paginate({}, options)
+  // console.log('department: ', department);
   res.json(department)
 
 })
 
 router.put('/', async function (req, res, next) {
+  console.log('body:' + req.body)
   const departmentUpdate = await Department.findOneAndUpdate({ _id: req.body._id }, { department: req.body.department })
   res.json(departmentUpdate)
   console.log(departmentUpdate)
@@ -36,8 +47,8 @@ router.put('/', async function (req, res, next) {
 
 })
 
-router.delete('/', async function (req, res, next) {
-  const departmentDelete = await Department.deleteOne({ _id: req.body._id })
+router.delete('/:id', async function (req, res, next) {
+  const departmentDelete = await Department.deleteOne({ _id: req.params.id })
   res.json(departmentDelete)
 })
 
