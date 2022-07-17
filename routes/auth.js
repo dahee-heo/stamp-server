@@ -22,7 +22,7 @@ router.post('/login', async function (req, res, next) {
   toJson.token = token
 
   res
-    .cookie('token', token, { domain: "http://localhost:3001", path: "/", maxAge: 90000 })
+    .cookie('token', token, { maxAge: 90000 })
     .json(toJson)
 
 });
