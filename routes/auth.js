@@ -3,8 +3,19 @@ var router = express.Router();
 const User = require('../schema/user.schema')
 const { encrypt, pwCompare, getToken, verify } = require('../util/auth.util')
 
+router.get('/session-verify', async function (req, res, next) {
+  if (req?.cookies?.token) {
+    const token = req?.cookies?.token
+    const userInfo = verify(token)
+    res.json({ ...userInfo, token })
+  } else {
+    res.status(401).json({ statusMessage: 'NOT_AUTHORIZITION' })
+  }
+})
+
 router.post('/login', async function (req, res, next) {
 
+  console.log('req.body: ', req.body);
   const findUser = await User.findOne({ id: req.body.id })
 
   if (!findUser) {
@@ -22,7 +33,7 @@ router.post('/login', async function (req, res, next) {
   toJson.token = token
 
   res
-    .cookie('token', token, { maxAge: 90000 })
+    .cookie('token', token, { maxAge: 24 * 60 * 60 * 1000 })
     .json(toJson)
 
 });
@@ -38,7 +49,7 @@ router.post('/sign-up', async function (req, res, next) {
   })
 
   await newUser.save()
-  newUser.set({ id: `${newUser.department}_${newUser._id.toString()}` })
+  newUser.set({ id: `${newUser.department}_${Date.now()}` })
   await newUser.save()
 
 
@@ -53,7 +64,8 @@ router.get('/', function (req, res, next) {
   })
 });
 
-
-//signup 구현하기
+router.get('/logout', async function (req, res, next) {
+  res.clearCookie().json({ statusMessage: 'done' })
+})
 
 module.exports = router;
