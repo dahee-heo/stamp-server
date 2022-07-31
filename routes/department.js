@@ -25,7 +25,6 @@ router.get('/', async function (req, res, next) {
   })
   // const department = await Department.find().select('department')
   // res.json(department)
-  req.query
   console.log('req.query: ', req.query);
 
   const options = {

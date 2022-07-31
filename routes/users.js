@@ -5,15 +5,21 @@ const User = require('../schema/user.schema');
 
 /* GET users listing. */
 router.get('/', async function (req, res, next) {
+  console.log('req: ', req.userInfo);
   // res.json({
   //   msg: 'test'
   // })
-  // const newUser = new User({
-  //   _id: req.body._id,
-  // })
+  const newUser = new User({
+    _id: req.body._id,
+  })
 
   const user = await User.find({})
   // console.log('user: ', user);
+  // const findModifyUser = await User.findOne({ _id: req.userInfo._id })
+  // if (findModifyUser) {
+  //   res.json(findModifyUser)
+  //   return
+  // }
 
   const options = {
     page: +req.query.page,
@@ -23,7 +29,13 @@ router.get('/', async function (req, res, next) {
   // console.log('department: ', department);
 
   res.json(userPage)
+
 });
+
+router.put('/', async function (req, res, next) {
+  const nameUpdate = await User.findOneAndUpdate({ id: req.userInfo.id }, { name: req.userInfo.name })
+  res.json(nameUpdate)
+})
 
 
 
