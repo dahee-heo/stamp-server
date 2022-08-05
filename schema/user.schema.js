@@ -4,7 +4,10 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 const UserSchema = new mongoose.Schema({
   name: String,
   id: String,
-  department: String,
+  department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department',
+  },
   password: String,
 })
 UserSchema.plugin(mongoosePaginate)

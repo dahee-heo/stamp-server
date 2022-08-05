@@ -20,9 +20,6 @@ router.post('/', async function (req, res, next) {
 })
 
 router.get('/', async function (req, res, next) {
-  const newDepartment = new Department({
-    department: req.body.department,
-  })
   // const department = await Department.find().select('department')
   // res.json(department)
   console.log('req.query: ', req.query);
@@ -57,7 +54,7 @@ router.get('/:id', async function (req, res, next) {
   })
 
   await newDepartment.save()
-  console.log(req.body)
+  // console.log(req.body)
 })
 
 

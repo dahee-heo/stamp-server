@@ -3,7 +3,10 @@ const mongoosePaginate = require('mongoose-paginate-v2')
 
 const AttendanceSchema = new mongoose.Schema({
   datetime: String,
-  userId: mongoose.Schema.Types.ObjectId,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   state: String,
 })
 AttendanceSchema.plugin(mongoosePaginate)

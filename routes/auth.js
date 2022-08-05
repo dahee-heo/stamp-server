@@ -1,13 +1,17 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../schema/user.schema')
+const Attendance = require('../schema/attendance.schema')
 const { encrypt, pwCompare, getToken, verify } = require('../util/auth.util')
 
 router.get('/session-verify', async function (req, res, next) {
   if (req?.cookies?.token) {
     const token = req?.cookies?.token
     const userInfo = verify(token)
-    res.json({ ...userInfo, token })
+    console.log('userInfo: ', userInfo);
+    const state = await Attendance.findOne({ userId: userInfo._id }).sort({ datetime: -1 })
+    console.log('state: ', state);
+    res.json({ ...userInfo, token, state })
   } else {
     res.status(401).json({ statusMessage: 'NOT_AUTHORIZITION' })
   }
@@ -30,11 +34,11 @@ router.post('/login', async function (req, res, next) {
   const toJson = findUser.toJSON()
   delete toJson.password
   const token = getToken(toJson)
-  toJson.token = token
+  const state = await Attendance.findOne({ userId: findUser._id }).sort({ datetime: -1 })
 
   res
     .cookie('token', token, { maxAge: 24 * 60 * 60 * 1000 })
-    .json(toJson)
+    .json({ ...toJson, token, state })
 
 });
 
@@ -53,19 +57,13 @@ router.post('/sign-up', async function (req, res, next) {
   await newUser.save()
 
 
-  console.log(req.body);
+  // console.log(req.body);
 });
 
 
-
-router.get('/', function (req, res, next) {
-  res.json({
-    msg: 'test'
-  })
-});
 
 router.get('/logout', async function (req, res, next) {
-  res.clearCookie().json({ statusMessage: 'done' })
+  res.clearCookie('token').json({ statusMessage: 'done' })
 })
 
 module.exports = router;

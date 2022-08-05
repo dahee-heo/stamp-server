@@ -19,8 +19,14 @@ router.post('/', async function (req, res, next) {
 
 router.get('/', async function (req, res, next) {
   const datetime = await Attendance.find({})
-
   res.json(datetime)
+})
+
+router.get('/state', async function (req, res, next) {
+  console.log('req: ', req.userInfo);
+
+  const attendanceState = await Attendance.findOne({ _id: req.userInfo._id })
+  res.json(attendanceState)
 })
 
 module.exports = router;

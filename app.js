@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var departmentRouter = require('./routes/department');
 var attendanceRouter = require('./routes/attendance');
+var adminAttendanceRouter = require('./routes/admin-attendance');
 const { verify } = require('./util/auth.util');
 
 var app = express();
@@ -77,6 +78,7 @@ app.use('/auth', authRouter);
 // app.use('/department', authMiddleware, departmentRouter);
 app.use('/department', departmentRouter);
 app.use('/attendance', attendanceRouter);
+app.use('/admin-attendance', adminAttendanceRouter);
 
 
 // catch 404 and forward to error handler
