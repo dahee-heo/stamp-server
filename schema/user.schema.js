@@ -9,6 +9,8 @@ const UserSchema = new mongoose.Schema({
     ref: 'Department',
   },
   password: String,
+  role: String,
+  //ADMIN | EMPLOYEE
 })
 UserSchema.plugin(mongoosePaginate)
 

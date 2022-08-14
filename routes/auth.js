@@ -45,11 +45,13 @@ router.post('/login', async function (req, res, next) {
 
 
 router.post('/sign-up', async function (req, res, next) {
+  console.log('req: ', req.body);
   const newUser = new User({
     name: req.body.name,
     department: req.body.department,
     password: encrypt(req.body.password),
     id: null,
+    role: req.body.role,
   })
 
   await newUser.save()
