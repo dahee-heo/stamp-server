@@ -18,8 +18,17 @@ router.post('/', async function (req, res, next) {
 })
 
 router.get('/', async function (req, res, next) {
-  const datetime = await Attendance.find({})
-  res.json(datetime)
+
+  const options = {
+    page: +req.query.page,
+    limit: +req.query.limit,
+  }
+
+  // const datetime = await Attendance.find({})
+  // res.json(datetime)
+  const attendance = await Attendance.paginate({}, options)
+  console.log('attendance: ', attendance);
+  res.json(attendance)
 })
 
 router.get('/state', async function (req, res, next) {

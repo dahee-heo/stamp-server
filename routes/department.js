@@ -26,6 +26,7 @@ router.get('/', async function (req, res, next) {
     limit: +req.query.limit,
   }
   const department = await Department.paginate({}, options)
+  console.log('department: ', department);
   // console.log('department: ', department);
   res.json(department)
 

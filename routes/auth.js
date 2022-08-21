@@ -60,8 +60,6 @@ router.post('/sign-up', async function (req, res, next) {
   newUser.set({ id: `${newUser.department}_${Date.now()}` })
   await newUser.save()
 
-
-  // console.log(req.body);
 });
 
 
@@ -83,8 +81,22 @@ router.put('/myinfo-id-update', async function (req, res, next) {
   res.json(myInfoUpdate)
 })
 router.put('/myinfo-pw-update', async function (req, res, next) {
+  // console.log('req: ', req.body);
+
+  const findUser = await User.findOne({ _id: req.body._id })
+  console.log('findUser: ', findUser);
+
+  if (!pwCompare(req.body.password, findUser.password)) {
+    console.log('invalid password')
+    res.status(401).json({ errorMessage: 'login fail' })
+    return
+  }
+  // if (req.newPassword === req.passwordCheck) {
+  // }
   const myInfoUpdate = await User.findOneAndUpdate({ _id: req.body._id }, { password: encrypt(req.body.newPassword) })
   res.json(myInfoUpdate)
+
+
 })
 
 router.delete('/:id', async function (req, res, next) {
