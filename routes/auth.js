@@ -23,10 +23,12 @@ router.post('/login', async function (req, res, next) {
   const findUser = await User.findOne({ id: req.body.id })
 
   if (!findUser) {
+    console.log('user not found')
     res.status(401).json({ errorMessage: 'login fail' })
     return
   }//사용자 없을때
   if (!pwCompare(req.body.password, findUser.password)) {
+    console.log('invalid password')
     res.status(401).json({ errorMessage: 'login fail' })
     return
   }//비밀번호 못찾을때
@@ -66,6 +68,28 @@ router.post('/sign-up', async function (req, res, next) {
 
 router.get('/logout', async function (req, res, next) {
   res.clearCookie('token').json({ statusMessage: 'done' })
+})
+
+
+router.put('/user-update', async function (req, res, next) {
+  const userUpdate = await User.findOneAndUpdate({ _id: req.body._id }, { name: req.body.name, department: req.body.department })
+  res.json(userUpdate)
+  console.log('userUpdate: ', userUpdate);
+})
+
+
+router.put('/myinfo-id-update', async function (req, res, next) {
+  const myInfoUpdate = await User.findOneAndUpdate({ _id: req.body._id }, { id: req.body.id })
+  res.json(myInfoUpdate)
+})
+router.put('/myinfo-pw-update', async function (req, res, next) {
+  const myInfoUpdate = await User.findOneAndUpdate({ _id: req.body._id }, { password: encrypt(req.body.newPassword) })
+  res.json(myInfoUpdate)
+})
+
+router.delete('/:id', async function (req, res, next) {
+  const employeeDelete = await User.deleteOne({ _id: req.params.id })
+  res.json(employeeDelete)
 })
 
 module.exports = router;

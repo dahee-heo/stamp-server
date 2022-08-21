@@ -20,9 +20,6 @@ router.post('/', async function (req, res, next) {
 })
 
 router.get('/', async function (req, res, next) {
-  // const department = await Department.find().select('department')
-  // res.json(department)
-  console.log('req.query: ', req.query);
 
   const options = {
     page: +req.query.page,

@@ -24,6 +24,9 @@ router.get('/', async function (req, res, next) {
   const options = {
     page: +req.query.page,
     limit: +req.query.limit,
+    populate: {
+      path: 'department',
+    }
   }
   const userPage = await User.paginate({}, options)
   // console.log('department: ', department);

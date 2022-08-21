@@ -18,6 +18,9 @@ var departmentRouter = require('./routes/department');
 var attendanceRouter = require('./routes/attendance');
 var adminAttendanceRouter = require('./routes/admin-attendance');
 const { verify } = require('./util/auth.util');
+const roleMiddlewareMixin = require('./middleware/role.middleware');
+const authMiddleware = require('./middleware/auth.middleware');
+const globalMiddleware = require('./middleware/global.middleware');
 
 var app = express();
 
@@ -26,36 +29,9 @@ const corsOptions = {
   credentials: true
 }
 
-const globalMiddleware = function (req, res, next) {
-  try {
 
-    if (req?.headers?.authorization) {
-      const token = req.headers.authorization.split(' ')[1]
-      req.userInfo = verify(token)
-      // console.log('req.userInfo: ', req.userInfo);
-    }
 
-    next()
-  } catch (error) {
-    console.log('error: ', error);
-    res.status(500).json({
-      statusMessage: 'UNCONTROLLED_ERROR'
-    })
 
-  }
-};
-
-const authMiddleware = function (req, res, next) {
-
-  if (!req?.userInfo) {
-    res.status(401).json({
-      stateMessage: 'AUTHORIZATION_FAIL'
-    })
-  } else {
-    console.log(res.userInfo)
-    next()
-  }
-};
 
 
 // view engine setup
@@ -75,10 +51,10 @@ app.use(globalMiddleware);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-// app.use('/department', authMiddleware, departmentRouter);
-app.use('/department', departmentRouter);
+app.use('/department', authMiddleware, departmentRouter);
+// app.use('/department', departmentRouter);
 app.use('/attendance', attendanceRouter);
-app.use('/admin-attendance', adminAttendanceRouter);
+app.use('/admin-attendance', roleMiddlewareMixin('ADMIN'), adminAttendanceRouter);
 
 
 // catch 404 and forward to error handler
