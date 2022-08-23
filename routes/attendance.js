@@ -24,9 +24,28 @@ router.get('/', async function (req, res, next) {
     limit: +req.query.limit,
   }
 
-  // const datetime = await Attendance.find({})
-  // res.json(datetime)
-  const attendance = await Attendance.paginate({}, options)
+  let query = {}
+
+  if (req?.query?.type) {
+    query = {
+      ...query,
+      state: req.query.type
+    }
+  }
+
+  if (req?.query?.start && req?.query?.end) {
+    const start = new Date(req.query.start)
+    const end = new Date(req.query.end)
+
+    query = {
+      ...query,
+      datetime: { $gt: start.getTime(), $lt: end.getTime() },
+    }
+  }
+
+  console.log('req?.query: ', req?.query);
+  const attendance = await Attendance.paginate(query, options)
+  console.log('query: ', query);
   console.log('attendance: ', attendance);
   res.json(attendance)
 })
