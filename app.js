@@ -21,16 +21,12 @@ const { verify } = require('./util/auth.util');
 const roleMiddlewareMixin = require('./middleware/role.middleware');
 const authMiddleware = require('./middleware/auth.middleware');
 const globalMiddleware = require('./middleware/global.middleware');
+const config = require('./secret/config');
 
 var app = express();
 
-const corsOptions = {
-  origin: ['http://localhost:3001'],
-  credentials: true
-}
-
-
-
+console.log('CURRENT NODE_ENV ::: ', process.env.NODE_ENV);
+const corsOptions = config[process.env.NODE_ENV]?.corsOptions ?? config?.LOCAL?.corsOptions
 
 
 

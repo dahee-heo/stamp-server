@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const config = require('../secret/config')
 const User = require('../schema/user.schema')
 const Attendance = require('../schema/attendance.schema')
 const { encrypt, pwCompare, getToken, verify } = require('../util/auth.util')
@@ -39,7 +40,7 @@ router.post('/login', async function (req, res, next) {
   const state = await Attendance.findOne({ userId: findUser._id }).sort({ datetime: -1 })
 
   res
-    .cookie('token', token, { maxAge: 24 * 60 * 60 * 1000 })
+    .cookie('token', token, config[process.env.NODE_ENV]?.cookieOptions ?? config?.LOCAL?.cookieOptions)
     .json({ ...toJson, token, state })
 
 });
