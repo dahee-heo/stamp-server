@@ -61,6 +61,8 @@ router.post('/sign-up', async function (req, res, next) {
   newUser.set({ id: `${newUser.department}_${Date.now()}` })
   await newUser.save()
 
+  res.json(newUser)
+
 });
 
 
