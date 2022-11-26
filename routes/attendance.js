@@ -22,6 +22,7 @@ router.get('/', async function (req, res, next) {
   const options = {
     page: +req.query.page,
     limit: +req.query.limit,
+    sort: { datetime: -1 }
   }
 
   let query = {}

@@ -27,6 +27,7 @@ var app = express();
 
 console.log('CURRENT NODE_ENV ::: ', process.env.NODE_ENV);
 const corsOptions = config[process.env.NODE_ENV]?.corsOptions ?? config?.LOCAL?.corsOptions
+console.log('corsOptions: ', corsOptions);
 
 
 
