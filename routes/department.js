@@ -37,8 +37,6 @@ router.put('/', async function (req, res, next) {
   const departmentUpdate = await Department.findOneAndUpdate({ _id: req.body._id }, { department: req.body.department })
   res.json(departmentUpdate)
   console.log(departmentUpdate)
-
-
 })
 
 router.delete('/:id', async function (req, res, next) {

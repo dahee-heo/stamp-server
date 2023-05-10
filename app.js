@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var departmentRouter = require('./routes/department');
 var attendanceRouter = require('./routes/attendance');
+var noticeRouter = require('./routes/notice');
 var adminAttendanceRouter = require('./routes/admin-attendance');
 const { verify } = require('./util/auth.util');
 const roleMiddlewareMixin = require('./middleware/role.middleware');
@@ -52,6 +53,7 @@ app.use('/department', authMiddleware, departmentRouter);
 // app.use('/department', departmentRouter);
 app.use('/attendance', attendanceRouter);
 app.use('/admin-attendance', roleMiddlewareMixin('ADMIN'), adminAttendanceRouter);
+app.use('/notice', noticeRouter);
 
 
 // catch 404 and forward to error handler
