@@ -70,5 +70,12 @@ router.get('/:id/comment', async function (req, res, next) {
   res.json(comment)
 })
 
+router.patch('/:id/comment', async function (req, res, next) {
+  console.log('req.body: ', req.body);
+  const noticeCommentUpdate = await Comment.findOneAndUpdate({ _id: req.body.commentId }, { 
+    content: req.body.content,
+  })
+  res.json(noticeCommentUpdate)
+})
 
 module.exports = router;

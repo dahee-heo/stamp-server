@@ -72,7 +72,7 @@ router.get('/logout', async function (req, res, next) {
 })
 
 
-router.put('/user-update', async function (req, res, next) {
+router.patch('/user-update', async function (req, res, next) {
   const userUpdate = await User.findOneAndUpdate({ _id: req.body._id }, { name: req.body.name, department: req.body.department })
   res.json(userUpdate)
   console.log('userUpdate: ', userUpdate);
