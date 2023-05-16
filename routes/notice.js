@@ -16,6 +16,13 @@ router.post('/', async function (req, res, next) {
   res.json(saveRes)
 })
 
+router.post('/file', async function (req, res, next) {
+  console.log('req: ', req.body);
+  if(req.files.length > 0) {
+    res.json(req.files[0])
+  }
+})
+
 router.get('/', async function (req, res, next) {
   const options = {
     page: +req.query.page,

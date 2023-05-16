@@ -7,6 +7,8 @@ var logger = require('morgan');
 var bodyParser = require('body-parser')
 var cors = require('cors')
 
+var multer = require('multer')
+
 const { mongooseInit } = require('./util/mongoose.util')
 
 mongooseInit()
@@ -23,6 +25,18 @@ const roleMiddlewareMixin = require('./middleware/role.middleware');
 const authMiddleware = require('./middleware/auth.middleware');
 const globalMiddleware = require('./middleware/global.middleware');
 const config = require('./secret/config');
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'public/')
+  },
+  filename: function(req, file, cb) {
+    let ext = file.originalname.split('.');
+    ext = ext[ext.length - 1];
+    cb(null, `${Date.now()}.${ext}`)
+  }
+});
+
+const upload = multer({ storage })
 
 var app = express();
 
@@ -44,6 +58,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(globalMiddleware);
+app.use(upload.array('files'))
 
 //regist router
 app.use('/', indexRouter);
@@ -54,7 +69,6 @@ app.use('/department', authMiddleware, departmentRouter);
 app.use('/attendance', attendanceRouter);
 app.use('/admin-attendance', roleMiddlewareMixin('ADMIN'), adminAttendanceRouter);
 app.use('/notice', noticeRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
