@@ -25,6 +25,13 @@ const roleMiddlewareMixin = require('./middleware/role.middleware');
 const authMiddleware = require('./middleware/auth.middleware');
 const globalMiddleware = require('./middleware/global.middleware');
 const config = require('./secret/config');
+
+var app = express();
+
+console.log('CURRENT NODE_ENV ::: ', process.env.NODE_ENV);
+const corsOptions = config[process.env.NODE_ENV]?.corsOptions ?? config?.LOCAL?.corsOptions
+console.log('corsOptions: ', corsOptions);
+
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, 'public/')
@@ -37,14 +44,6 @@ var storage = multer.diskStorage({
 });
 
 const upload = multer({ storage })
-
-var app = express();
-
-console.log('CURRENT NODE_ENV ::: ', process.env.NODE_ENV);
-const corsOptions = config[process.env.NODE_ENV]?.corsOptions ?? config?.LOCAL?.corsOptions
-console.log('corsOptions: ', corsOptions);
-
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
