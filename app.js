@@ -25,6 +25,7 @@ const roleMiddlewareMixin = require('./middleware/role.middleware');
 const authMiddleware = require('./middleware/auth.middleware');
 const globalMiddleware = require('./middleware/global.middleware');
 const config = require('./secret/config');
+const fs = require('fs-extra')
 
 var app = express();
 
@@ -34,7 +35,14 @@ console.log('corsOptions: ', corsOptions);
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'public/images')
+    console.log('req: ', req.userInfo._id);
+    const path = `./public/images/temp/${req.userInfo._id}`;
+
+    //이미지 임시저장 
+    !fs.existsSync(path) && fs.mkdirSync(path, (err) => {
+      if(err) cb(err)
+    });
+    cb(null, `public/images/temp/${req.userInfo._id}`)
   },
   filename: function(req, file, cb) {
     let ext = file.originalname.split('.');

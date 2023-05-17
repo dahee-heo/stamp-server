@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const fs = require('fs-extra')
+
 const Notice = require('../schema/notice.schema');
 const Comment = require('../schema/comment.schema');
 
@@ -11,15 +13,36 @@ router.post('/', async function (req, res, next) {
     content: req.body.content,
     date: req.body.date,
   }
-  const newNocice = new Notice(params)
-  const saveRes = await newNocice.save()
-  res.json(saveRes)
-})
+  // const newNocice = new Notice(params)
+  let newNocice = new Notice(params).save();
+  const { _id: postId, userId, content } = newNocice;
 
-router.post('/file', async function (req, res, next) {
-  if(req.files.length > 0) {
-    res.json(req.files[0])
+  const oldPath = `./public/images/temp/${userId}`
+  const newPath = `./public/images/temp/${postId}`
+
+  !fs.existsSync(newPath) && fs.mkdirSync(newPath);
+
+  const imgSrcReg = /(<img[^>]*src\s*=\s*[\"']?([^>\"']+)[\"']?[^>]*>)/g;
+
+  while(imgSrcReg.test(content)){
+    // let src = RegExp.$2.trim();
+    const matchResult = content.match(imgSrcReg)
+    let src = matchResult[2].trim();
+    console.log('src: ', src);
+    let imgName = src.substr(src.indexOf(userId) + userId.length + 1);
+    let tmpImgPath = oldPath + `/${imgName}`;
+    let postImgPath = newPath + `/${imgName}`;
+
+    fs.existsSync(tmpImgPath) && fs.rename(tmpImgPath, postImgPath, (err) => {
+      if(err) throw new Error(err);
+      console.log('이미지 옮김 성공')
+    })
   }
+
+  const newContent = content.replaceAll(`temp/${userId}`, `posts/${postId}`)
+  // const saveRes = await newNocice.save()
+  newPost = await Notice.findOneAndUpdate({_id: postId}, {content: newContent})
+  res.json(newPost)
 })
 
 router.get('/', async function (req, res, next) {
@@ -82,6 +105,25 @@ router.patch('/:id/comment', async function (req, res, next) {
     content: req.body.content,
   })
   res.json(noticeCommentUpdate)
+})
+
+//이미지 파일 업로드 시
+router.post('/file/:id', async function (req, res, next) {
+  if(req.files.length > 0) {
+    res.json(req.files[0])
+  }
+})
+
+//업로드 취소 시 임시 파일 삭제
+router.delete('/file/:id', async function (req, res, next) {
+  const path = `./public/images/temp/${req.userInfo._id}`
+  try {
+    console.log('디렉토리 삭제')
+    fs.existsSync(path) && fs.removeSync(path);
+    res.json('디렉토리를 성공적으로 삭제하였습니다.')
+  } catch (err) {
+    throw new Error(err.message)
+  }
 })
 
 module.exports = router;
