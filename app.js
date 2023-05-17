@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 var cors = require('cors')
-
 var multer = require('multer')
+const mime = require("mime-types");
 
 const { mongooseInit } = require('./util/mongoose.util')
 
@@ -34,7 +34,7 @@ console.log('corsOptions: ', corsOptions);
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'public/')
+    cb(null, 'public/images')
   },
   filename: function(req, file, cb) {
     let ext = file.originalname.split('.');
@@ -43,7 +43,16 @@ var storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage })
+const upload = multer({ 
+  storage,
+  fileFilter: (req, file, cb) => {
+    if(['image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype)) {
+      return cb(null, true);
+    } else {
+      return cb(new Error('해당 파일의 형식을 지원하지 않습니다.', false));
+    }
+  }
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

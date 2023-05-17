@@ -17,7 +17,6 @@ router.post('/', async function (req, res, next) {
 })
 
 router.post('/file', async function (req, res, next) {
-  console.log('req: ', req.body);
   if(req.files.length > 0) {
     res.json(req.files[0])
   }
