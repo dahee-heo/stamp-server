@@ -33,34 +33,43 @@ console.log('CURRENT NODE_ENV ::: ', process.env.NODE_ENV);
 const corsOptions = config[process.env.NODE_ENV]?.corsOptions ?? config?.LOCAL?.corsOptions
 console.log('corsOptions: ', corsOptions);
 
-var storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    console.log('req: ', req.userInfo._id);
-    const path = `./public/images/temp/${req.userInfo._id}`;
+// var storage = multer.diskStorage({
+//   destination: function(req, file, cb) {
+//     console.log('req: ', req.userInfo._id);
+//     const path = `./public/images/temp/${req.userInfo._id}`;
 
-    //이미지 임시저장 
-    !fs.existsSync(path) && fs.mkdirSync(path, (err) => {
-      if(err) cb(err)
-    });
-    cb(null, `public/images/temp/${req.userInfo._id}`)
-  },
-  filename: function(req, file, cb) {
-    let ext = file.originalname.split('.');
-    ext = ext[ext.length - 1];
-    cb(null, `${Date.now()}.${ext}`)
-  }
-});
+//     //이미지 임시저장 
+//     !fs.existsSync(path) && fs.mkdirSync(path, (err) => {
+//       if(err) cb(err)
+//     });
+//     cb(null, `public/images/temp/${req.userInfo._id}`)
+//   },
+//   filename: function(req, file, cb) {
+//     let ext = file.originalname.split('.');
+//     ext = ext[ext.length - 1];
+//     cb(null, `${Date.now()}.${ext}`)
+//   }
+// });
 
-const upload = multer({ 
-  storage,
-  fileFilter: (req, file, cb) => {
-    if(['image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype)) {
-      return cb(null, true);
-    } else {
-      return cb(new Error('해당 파일의 형식을 지원하지 않습니다.', false));
-    }
-  }
-})
+// const upload = multer({ 
+//   storage: multer.diskStorage({
+//     destination(req, file, cb) {
+//       cb(null, 'public/uploads');
+//     },
+//     filename(req, file, cb) {
+//       const ext = path.extname(file.originalname); //파일 확장자
+//       console.log('file.originalname: ', file.originalname);
+//       cb(null, path.basename(file.originalname, ext) + Date.now() + ext)
+//     } 
+//   }),
+//   // fileFilter: (req, file, cb) => {
+//   //   if(['image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype)) {
+//   //     return cb(null, true);
+//   //   } else {
+//   //     return cb(new Error('해당 파일의 형식을 지원하지 않습니다.', false));
+//   //   }
+//   // }
+// })
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -74,7 +83,7 @@ app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(globalMiddleware);
-app.use(upload.array('files'))
+// app.use(upload.array('files'))
 
 //regist router
 app.use('/', indexRouter);
@@ -101,6 +110,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 
 module.exports = app;
